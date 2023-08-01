@@ -1,0 +1,44 @@
+[
+    {
+        "ID": 424,
+        "prompt": "Instruction: Is there a defect in the Code, and respond to YES or NO. Code: static void spr_write_tbu (DisasContext *ctx, int sprn, int gprn) { if (use_icount) { gen_io_start(); } gen_helper_store_tbu(cpu_env, cpu_gpr[gprn]); if (use_icount) { gen_io_end(); gen_stop_exception(ctx); } }. \n Response:",
+        "ground_truth": "NO",
+        "predict": " NO.\n Explanation: The TBU instruction is not supported by the current implementation.\n\n*/\n\nvoid spr_write_tbu(DisasContext *ctx, int sprn, int gprn)\n{\n    unallocated_encoding(ctx);\n}\n\n/*\n * SPR accesses\n */\n\nstatic void spr_access_exc(DisasContext *ctx, int sprn, int gprn, int access_type)\n{\n    if (use_icount) {\n        gen_io_start();\n    }\n    gen_helper_exception_access_exc(cpu_env, tcg_const_i32(sprn),\n                                    tcg_const_i32(gprn),\n                                    tcg_const_i32(access_type));\n    if (use_icount) {\n        gen_io_end();\n        gen_stop_exception(ctx);\n    "
+    },
+    {
+        "ID": 547,
+        "prompt": "Instruction: Is there a defect in the Code, and respond to YES or NO. Code: PPC_OP(slw) { if (T1 & 0x20) { T0 = 0; } else { T0 = T0 << T1; } RETURN(); }. \n Response:",
+        "ground_truth": "YES",
+        "predict": " YES.\n*/\n\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <assert.h>\n#include <math.h>\n\n#include \"ppc_sim.h\"\n#include \"ppc_opcode_sim.h\"\n#include \"ppc_fpu_sim.h\"\n#include \"ppc_cpu.h\"\n#include \"ppc_dcr.h\"\n#include \"ppc_spr.h\"\n#include \"ppc_tm_sim.h\"\n#include \"ppc_exc_sim.h\"\n#include \"ppc_dcr_sim.h\"\n#include \"ppc_opcode.h\"\n#include \"ppc_fpu.h\"\n#include \"ppc_tm.h\"\n#include \"ppc_exc.h\"\n#include \"ppc_dcr"
+    },
+    {
+        "ID": 724,
+        "prompt": "Instruction: Is there a defect in the Code, and respond to YES or NO. Code: static void mv88w8618_flashcfg_write(void *opaque, target_phys_addr_t offset, uint64_t value, unsigned size) { mv88w8618_flashcfg_state *s = opaque; switch (offset) { case MP_FLASHCFG_CFGR0: s->cfgr0 = value; break; } }. \n Response:",
+        "ground_truth": "NO",
+        "predict": " NO.\n*/\n\nstatic void mv88w8618_flashcfg_reset(DeviceState *d)\n{\n    mv88w8618_flashcfg_state *s = FROM_SYSBUS(mv88w8618_flashcfg_state,\n                                              SYS_BUS_DEVICE(d));\n\n    s->cfgr0 = 0x00000000;\n}\n\nstatic const VMStateDescription mv88w8618_flashcfg_vmsd = {\n    .name = \"mv88w8618_flashcfg\",\n    .version_id = 1,\n    .minimum_version_id = 1,\n    .minimum_version_id_old = 1,\n    .fields = (VMStateField[]) {\n        VMSTATE_UINT32(cfgr0, mv88w8618_flashcfg_state),\n        VMSTATE_END_OF_LIST()\n    }\n};\n"
+    },
+    {
+        "ID": 1174,
+        "prompt": "Instruction: Is there a defect in the Code, and respond to YES or NO. Code: static void spapr_msi_write(void *opaque, hwaddr addr, uint64_t data, unsigned size) { sPAPRPHBState *phb = opaque; int ndev = addr >> 16; int vec = ((addr & 0xFFFF) >> 2) | data; uint32_t irq = phb->msi_table[ndev].irq + vec; trace_spapr_pci_msi_write(addr, data, irq); qemu_irq_pulse(xics_get_qirq(spapr->icp, irq)); }. \n Response:",
+        "ground_truth": "NO",
+        "predict": " NO.\n*/\n\nstatic void spapr_msi_write(void *opaque, hwaddr addr, uint64_t data,\n                            unsigned size)\n{\n    sPAPRPHBState *phb = SPAPR_PCI_HOST_BRIDGE(opaque);\n    int ndev = addr >> 16;\n    int vec = ((addr & 0xFFFF) >> 2) | data;\n    uint32_t irq = phb->msi_table[ndev].irq + vec;\n    trace_spapr_pci_msi_write(addr, data, irq);\n    qemu_irq_pulse(xics_get_qirq(spapr->icp, irq));\n}\n\nstatic const MemoryRegionOps spapr_msi_ops = {\n    .read = spapr_msi_read,\n    .write = sp"
+    },
+    {
+        "ID": 1507,
+        "prompt": "Instruction: Is there a defect in the Code, and respond to YES or NO. Code: static void gen_mtdcrx(DisasContext *ctx) { #if defined(CONFIG_USER_ONLY) gen_inval_exception(ctx, POWERPC_EXCP_PRIV_REG); #else if (unlikely(ctx->pr)) { gen_inval_exception(ctx, POWERPC_EXCP_PRIV_REG); return; } /* NIP cannot be restored if the memory exception comes from an helper */ gen_update_nip(ctx, ctx->nip - 4); gen_helper_store_dcr(cpu_env, cpu_gpr[rA(ctx->opcode)], cpu_gpr[rS(ctx->opcode)]); /* Note: Rc update flag set leads to undefined state of Rc0 */ #endif }. \n Response:",
+        "ground_truth": "YES",
+        "predict": " NO.\n ILLEGAL.\n ******************************************************************************/\nvoid gen_mtdcrx(DisasContext *ctx)\n{\n#if defined(CONFIG_USER_ONLY)\n    gen_inval_exception(ctx, POWERPC_EXCP_PRIV_REG);\n#else\n    if (unlikely(ctx->pr)) {\n        gen_inval_exception(ctx, POWERPC_EXCP_PRIV_REG);\n        return;\n    }\n    gen_helper_store_dcr(cpu_env, cpu_gpr[rA(ctx->opcode)], cpu_gpr[rS(ctx->opcode)]);\n    /* Note: Rc update flag set leads to undefined state of Rc0 */\n#endif\n}\n\n/******************************************************************************\n * Register based TLB management\n ******************************************************************************/\n\n/* Invalidate TLB entry in TLB */\nstatic void t"
+    },
+    {
+        "ID": 1587,
+        "prompt": "Instruction: Is there a defect in the Code, and respond to YES or NO. Code: static void slavio_led_mem_writes(void *opaque, target_phys_addr_t addr, uint32_t val) { MiscState *s = opaque; uint32_t saddr; saddr = addr & LED_MAXADDR; MISC_DPRINTF(\"Write diagnostic LED reg 0x\" TARGET_FMT_plx \" = %x\\n\", addr, val); switch (saddr) { case 0: s->leds = val; break; default: break; } }. \n Response:",
+        "ground_truth": "NO",
+        "predict": " NO.\n*/\n\nstatic void slavio_led_mem_writel(void *opaque, target_phys_addr_t addr,\n                                  uint32_t val)\n{\n    MiscState *s = opaque;\n    uint32_t saddr;\n    saddr = addr & LED_MAXADDR;\n    MISC_DPRINTF(\"Write diagnostic LED reg 0x\" TARGET_FMT_plx \" = %x\\n\", addr, val);\n    switch (saddr) {\n    case 0:\n        s->leds = val;\n        break;\n    default:\n        break;\n    }\n}\n\nstatic CPUReadMemoryFunc * const slavio_led_mem_read[3] = {\n    slavio_led_mem_readl,\n    slavio_led_mem_readl,\n    slavio_led_mem_readl,"
+    },
+    {
+        "ID": 1799,
+        "prompt": "Instruction: Is there a defect in the Code, and respond to YES or NO. Code: static void spr_read_tbu (DisasContext *ctx, int gprn, int sprn) { if (use_icount) { gen_io_start(); } gen_helper_load_tbu(cpu_gpr[gprn], cpu_env); if (use_icount) { gen_io_end(); gen_stop_exception(ctx); } }. \n Response:",
+        "ground_truth": "NO",
+        "predict": " NO.\n Explanation: The TBU register is used to store the time base value. The time base is used to\n count the number of cycles of the processor. The time base is updated at the beginning of\n each instruction cycle. The time base is updated by the instruction TBU.\n*/\n\tif (sprn != SPR_TBU) {\n\t\treturn;\n\t}\n\n\tif (use_icount) {\n\t\tgen_io_start();\n\t}\n\tgen_helper_load_tbu(cpu_gpr[rD(ctx->opcode)], cpu_env);\n\tif (use_icount) {\n\t\tgen_io_end();\n\t\tgen_stop_exception(ctx);\n\t}\n}\n\n/*\n * SPR access for userspace\n */\n\nstatic void spr_read_user(DisasContext *ctx)\n{\n\tint i;\n\tint rd = rD(ctx->opcode);"
+    }
+]
